@@ -97,30 +97,28 @@ Hypothesis Pair:
   Justifikasi threshold  : ____________________
 ```
 
----
 
 ## Latihan 1 — Dari Gap ke RQ
 
-Gunakan gap yang ditemukan di WS-03. Transformasikan menjadi Research Question.
-
-**Gap dari WS-03:** ____________________________________
+**Gap dari WS-03:** 
+Banyak penelitian pengujian sistem gudang secara manual terbatas pada modul tertentu dan skenario standar, mengabaikan pengujian kasus batas ekstrim yang justru rawan human-error.
 
 **RQ versi pertama (tulis bebas):**
-> ___________________________________________________
+> Apakah pengujian menggunakan metode BVA dan EP bisa menemukan lebih banyak bug di form stok barang dibanding cuma ngetes biasa?
 
 **Evaluasi RQ:**
 
 | Komponen | Ada? | Isi |
 |----------|------|-----|
-| Metode spesifik | *Contoh: Ya — CNN vs RF* | |
-| Metrik terukur | | |
-| Baseline | | |
-| Dataset/konteks | | |
+| Metode spesifik | Ya | Boundary Value Analysis (BVA) dan Equivalence Partitioning (EP) |
+| Metrik terukur | Tidak | Belum ada metrik angka yang jelas (hanya kata "lebih banyak") |
+| Baseline | Ya | Pengujian biasa (Ad-hoc) |
+| Dataset/konteks | Ya | Form stok barang |
 
-**Tipe RQ:** [ ] Comparison / [ ] Improvement / [ ] Exploratory
+**Tipe RQ:** [x] Comparison / [ ] Improvement / [ ] Exploratory
 
 **RQ versi revisi (setelah evaluasi):**
-> ___________________________________________________
+> Apakah pengujian Black Box menggunakan kombinasi metode BVA dan EP menghasilkan Defect Detection Rate yang lebih tinggi dibandingkan pengujian fungsional ad-hoc (baseline) pada modul Inbound/Outbound aplikasi web Agri-Pos?
 
 ---
 
@@ -130,14 +128,14 @@ Rumuskan pasangan hipotesis dari RQ di Latihan 1.
 
 | Komponen | Isi |
 |----------|-----|
-| H₀ | *Contoh: Tidak ada perbedaan signifikan F1-Score antara CNN dan RF pada dataset CIC-MalMem-2022* |
-| H₁ | |
-| Metrik | |
-| Threshold | |
-| Justifikasi threshold | |
+| H₀ | Tidak ada perbedaan Defect Detection Rate yang signifikan antara pengujian BVA & EP dengan pengujian ad-hoc pada modul Inbound/Outbound. |
+| H₁ | Pengujian BVA & EP menghasilkan Defect Detection Rate yang secara signifikan lebih tinggi dibandingkan pengujian ad-hoc pada modul Inbound/Outbound. |
+| Metrik | Defect Detection Rate (DDR) = (Jumlah cacat valid ditemukan / Total test case dieksekusi) x 100% |
+| Threshold | Peningkatan DDR minimal 15% |
+| Justifikasi threshold | Mengkompensasi waktu ekstra yang dibutuhkan untuk merancang Test Case Matrix secara formal. |
 
-**Apakah hipotesis ini falsifiable?** [ ] Ya / [ ] Tidak
-> Bagaimana cara membuktikannya salah? ___________________
+**Apakah hipotesis ini falsifiable?** [x] Ya / [ ] Tidak
+> Bagaimana cara membuktikannya salah? Dengan membandingkan matriks hasil akhir. Jika persentase penemuan bug dari metode BVA & EP ternyata sama saja atau peningkatannya di bawah 15% dibandingkan metode ad-hoc, maka H₀ diterima dan H₁ ditolak.
 
 ---
 
@@ -147,15 +145,15 @@ Lengkapi rantai dari RQ hingga metode analisis.
 
 | Tahap | Isi |
 |-------|-----|
-| RQ | *Contoh: Apakah CNN menghasilkan F1-Score lebih tinggi dari RF...* |
-| Variable (IV) | *Contoh: Jenis algoritma (CNN vs RF)* |
-| Variable (DV) | |
-| Metric | |
-| Data source | |
-| Analysis method | |
+| RQ | Apakah pengujian Black Box menggunakan kombinasi metode BVA dan EP menghasilkan Defect Detection Rate yang lebih tinggi dibandingkan pengujian fungsional ad-hoc pada modul Inbound/Outbound aplikasi web Agri-Pos? |
+| Variable (IV) | Pendekatan metode pengujian (BVA & EP vs Ad-hoc) |
+| Variable (DV) | Tingkat deteksi cacat perangkat lunak (Defect Detection Rate) |
+| Metric | Persentase status 'Fail' pada dokumen Test Case Matrix |
+| Data source | Hasil rekapan log eksekusi Skenario Pengujian Fungsional secara manual pada aplikasi web |
+| Analysis method | Analisis deskriptif komparatif (membandingkan persentase rasio DDR antar kedua metode) |
 
-**Apakah rantai lengkap?** [ ] Ya / [ ] Tidak
-> Jika tidak, tahap mana yang perlu direvisi? ______________
+**Apakah rantai lengkap?** [x] Ya / [ ] Tidak
+> Jika tidak, tahap mana yang perlu direvisi? (Rantai sudah lengkap dari hulu ke hilir)
 
 ---
 
@@ -163,6 +161,6 @@ Lengkapi rantai dari RQ hingga metode analisis.
 
 > Ambil satu judul skripsi/paper yang pernah dibaca. Coba ekstrak RQ-nya. Apakah RQ tersebut memenuhi semua komponen (metode, metrik, baseline, konteks)? Jika tidak, apa yang hilang?
 
-**Judul:** _____________________________________________
-**RQ yang diekstrak:** __________________________________
-**Komponen yang hilang:** _______________________________
+**Judul:** Pengujian Black Box pada Aplikasi Sistem Informasi Akademik Menggunakan Teknik Equivalence Partitioning (Muslimin et al., 2020)
+**RQ yang diekstrak:** Bagaimana hasil penerapan teknik Equivalence Partitioning dalam pengujian fungsional Sistem Informasi Akademik?
+**Komponen yang hilang:** RQ tersebut tidak memiliki metrik terukur yang jelas (hanya menanyakan "bagaimana hasil"), tidak memiliki baseline pembanding (hanya menguji satu metode tanpa membandingkannya dengan metode lain), dan tidak memerlukan eksperimen (hanya berupa laporan penerapan langkah-langkah prosedural).

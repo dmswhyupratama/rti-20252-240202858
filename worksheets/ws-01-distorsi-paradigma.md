@@ -49,81 +49,79 @@ Mata kuliah ini menggunakan pendekatan **Positivist** (fenomena TI bisa diukur o
 - **Falsifiability** — Hipotesis harus bisa dibuktikan salah
 
 ---
-
 ## Template A.1 — Research Mindset Self-Assessment
 
 ```
 Nama Peneliti    : Dimas Wahyu Pratama
-Tanggal          : 19 April 2026
+Tanggal          : 4 Mei 2026
 
-1. Ketika membaca klaim "nilai kecocokan 910.2431 dari 117 generasi":
-   - Pertanyaan pertama saya: Apakah nilai fitness tersebut benar-benar merepresentasikan rute yang efisien di dunia nyata atau hanya angka optimal secara matematis dalam model simulasi? [cite: 10, 257]
-   - Data yang dibutuhkan untuk verifikasi: Perbandingan visual rute yang dihasilkan dengan kondisi lalu lintas sebenarnya di Google Maps pada waktu yang sama.
+1. Ketika membaca klaim "Aplikasi 100% valid dan bebas dari error fungsional":
+   - Pertanyaan pertama saya: Apakah pengujian tersebut mencakup skenario batas ekstrim (edge cases), ataukah hanya menguji alur normal (happy path) saja?
+   - Data yang dibutuhkan untuk verifikasi: Dokumen Test Case Matrix yang secara eksplisit mencantumkan nilai input uji di luar kebiasaan (misal: angka negatif, karakter non-numerik, atau batas maksimal integer).
 
 2. Posisi paradigma:
-   - Pendekatan: [ ] Positivis  [ ] Interpretivis  [x] Design Science  [ ] Mixed
-   - Alasan: Penelitian ini fokus pada pengembangan sebuah artefak (sistem perangkat lunak) untuk memecahkan masalah praktis (penentuan rute wisata)[cite: 32, 254].
+   - Pendekatan: [x] Positivis  [ ] Interpretivis  [ ] Design Science  [ ] Mixed
+   - Alasan: Penelitian ini fokus pada evaluasi objektif dan pengukuran empiris terhadap tingkat deteksi cacat (Defect Detection Rate) suatu perangkat lunak menggunakan teknik eksperimen terkontrol.
 
 3. Identifikasi distorsi:
-   - Asumsi tersembunyi: Diasumsikan bahwa kemacetan di Bandung bisa disederhanakan menjadi 3 bobot statis (1.0, 1.5, 2.0).
-   - Sumber bias potensial: Sampling Bias (hanya menggunakan 162 lokasi dari ribuan kemungkinan titik di Bandung)[cite: 33, 86].
-   - Langkah mitigasi: Mengintegrasikan data lalu lintas real-time dari API pihak ketiga daripada menggunakan bobot statis.
+   - Asumsi tersembunyi: Diasumsikan bahwa pengguna akan selalu menginput data stok sesuai dengan format yang diminta oleh sistem.
+   - Sumber bias potensial: Sampling Bias (hanya menguji sebagian kecil form dasar seperti login, dan mengabaikan form krusial seperti transaksi inbound/outbound).
+   - Langkah mitigasi: Menerapkan metode Boundary Value Analysis (BVA) dan Equivalence Partitioning (EP) untuk memastikan semua kelompok data (valid dan invalid) terwakili dalam sampel pengujian.
 
 4. Komitmen etika:
-   - Data yang tidak akan dimanipulasi: Hasil pengujian nilai kecocokan (fitness) dan jumlah generasi yang diperlukan hingga konvergen.
-   - Batasan yang diakui sejak awal: Peneliti mengakui bahwa rute yang dihasilkan sistem masih belum sempurna karena masih berbentuk zig-zag.
+   - Data yang tidak akan dimanipulasi: Status kelulusan (Pass/Fail) dari setiap skenario pengujian. Jika sistem mengalami crash, mutlak dicatat sebagai 'Fail' (bug).
+   - Batasan yang diakui sejak awal: Peneliti mengakui bahwa pengujian Black-Box ini hanya menguji fungsionalitas dari sisi antarmuka dan validasi Controller, tanpa melakukan code-review (White-Box) pada source code internal.
 ```
-
----
 
 ## Latihan 1 — Identifikasi Distorsi
 
 **Paper yang dipilih:**
-> Judul: Optimalisasi Rute Obyek Wisata Di Bandung Raya Menggunakan Algoritma Genetika
-> Penulis (Tahun): Nur Muhammad Hasyim, Esmeralda C. Djamal, Agus Komarudin (2017)
->  Sumber/Link DOI: https://journal.uii.ac.id/Snati/article/view/8490/7215
+> Judul: Analisis dan Pengujian Sistem Informasi Stok dengan Boundary Value Analysis pada PT ABC
+> Penulis (Tahun): Bong et al. (2024)[cite: 14]
 
 | Tahap | Apa yang Dilakukan | Potensi Distorsi |
 |-------|-------------------|-----------------|
-| Reality → Data | Mengambil 500 titik persimpangan dari Google Maps API dan menentukan bobot kemacetan statis (1.0 - 2.0). | **Simplification Bias**: Kondisi nyata lalu lintas Bandung sangat dinamis; penyederhanaan menjadi 3 bobot kaku menghilangkan variabel penting seperti cuaca atau penutupan jalan sementara. |
-| Data → Processing | Inisialisasi 8 kromosom dengan panjang 30 gen yang mewakili titik-titik persimpangan. | **Representation Error**: Panjang kromosom yang statis (30 gen) mungkin tidak cukup untuk mewakili rute yang sangat kompleks atau terlalu panjang untuk rute yang dekat. |
-| Processing → Analysis | Menghitung fitness menggunakan fungsi kecocokan dan melakukan seleksi Rank Based Fitness. | **Algorithmic Bias**: Penggunaan Rank Based Fitness mungkin menyebabkan hilangnya variasi genetik terlalu cepat jika tidak diseimbangkan dengan laju mutasi yang tepat. |
-| Analysis → Inference | Membandingkan 5 rute terbaik dari 25 kali pengujian total. | **Cherry-picking**: Peneliti cenderung menonjolkan nilai kecocokan tertinggi (910.2431) di kesimpulan, padahal banyak pengujian lain yang hasilnya jauh di bawah itu. |
-| Inference → Knowledge | Menyimpulkan sistem dapat memberikan rekomendasi rute terpendek dan tercepat. | **Overgeneralization**: Klaim "rute tercepat" sulit divalidasi karena model hanya menggunakan bobot estimasi, bukan durasi perjalanan nyata yang divalidasi di lapangan. |
+| Reality → Data | Mengamati proses pengelolaan stok saat ini dan merancang skenario pengujian fungsional. | **Simplification Bias**: Peneliti mungkin hanya berfokus pada form input sederhana, mengabaikan kompleksitas perilaku pengguna nyata yang sering melakukan kesalahan ketik atau input massal. |
+| Data → Processing | Membagi data menjadi partisi valid dan invalid (EP) serta nilai batas (BVA). | **Representation Error**: Pemilihan batas nilai (boundary) yang salah atau tidak sesuai dengan tipe data database aktual (misalnya VARCHAR vs INT) dapat menghasilkan skenario yang tidak relevan. |
+| Processing → Analysis | Mengeksekusi pengujian secara manual terhadap form harga dan stok. | **Confirmation Bias**: Penguji yang melakukan secara manual bisa secara tidak sadar melewati skenario yang dianggap "pasti berhasil" dan lebih fokus mencari error di area yang mereka curigai saja. |
+| Analysis → Inference | Menyimpulkan bahwa sistem berfungsi dengan baik dengan beberapa anomali minor. | **Overgeneralization**: Menyimpulkan keseluruhan sistem aman padahal yang diuji mungkin hanya sebagian kecil modul utama saja. |
+| Inference → Knowledge | Menyarankan perbaikan validasi input dan pengujian lanjutan. | **Reporting Bias**: Peneliti terkadang enggan menonjolkan kegagalan fatal (critical bug) agar aplikasi yang diuji tidak terlihat buruk secara publik. |
 
-**Distorsi paling besar di tahap:** **Analysis → Inference**
+**Distorsi paling besar di tahap:** **Processing → Analysis**
 
 **Dua distorsi spesifik yang teridentifikasi:**
-1. **Reporting Bias**: Peneliti baru mengungkapkan di bagian akhir kesimpulan bahwa rute yang dihasilkan "masih dalam keadaan zig-zag", padahal di abstrak diklaim sebagai sistem optimasi yang berhasil.
-2. **External Validity Threat**: Penggunaan bobot kemacetan 1.0, 1.5, dan 2.0 merupakan distorsi data yang sangat besar karena tidak mencerminkan fluktuasi waktu tempuh yang sebenarnya di area Bandung Raya.
+1. **Confirmation Bias**: Penguji manual cenderung menguji apa yang sudah mereka ketahui, sehingga berpotensi melewatkan *blind spot* pada modul tertentu.
+2. **Overgeneralization**: Klaim "aplikasi berjalan dengan baik" sering kali tidak sejalan dengan cakupan pengujian (*test coverage*) yang sebenarnya sangat terbatas.
+
 ---
 
 ## Latihan 2 — Analisis Kasus Etika
 
-Skenario: Seorang peneliti menemukan bahwa jika 3 data point outlier dihapus, hasil eksperimennya menjadi signifikan. Dengan outlier, hasilnya tidak signifikan.
+Skenario: Seorang peneliti/QA menemukan bahwa saat menginput angka minus (-50) pada form Outbound, database mengalami *fatal crash* dan merusak tabel lain. Karena takut aplikasi dinilai buruk oleh dosen/klien, ia menghapus test case tersebut dari laporannya dan hanya melaporkan error kecil seperti "salah password".
 
 | Perspektif | Analisis |
 |------------|---------|
-| Kejujuran ilmiah | Dalam konteks paper ini, peneliti menunjukkan kejujuran dengan tetap melaporkan bahwa rute yang dihasilkan masih zig-zag. Menghapus outlier tanpa alasan metodologis adalah pelanggaran kejujuran. |
-| Transparansi | Peneliti harus menjelaskan kriteria *outlier* tersebut. Jika dihapus, harus dilaporkan alasan teknisnya (misalnya karena gangguan koneksi API saat pengambilan data). |
-| Peer review | Laporan yang jujur tentang kegagalan atau rute zig-zag membantu penelaah memberikan masukan yang tepat untuk perbaikan algoritma ke depannya. |
+| Kejujuran ilmiah | Ini adalah manipulasi data yang fatal (*cherry-picking*). Menghapus *test case* yang gagal secara fundamental melanggar prinsip kejujuran dalam Software Quality Assurance (SQA). |
+| Transparansi | Seharusnya peneliti melaporkan *fatal crash* tersebut secara rinci, termasuk variabel input apa yang memicunya, agar pengembang (developer) bisa melakukan *patching* atau perbaikan di level Controller. |
+| Peer review | Jika disembunyikan, *reviewer* atau pengguna akhir akan menemukan bug ini di tahap *production*, yang dampaknya (seperti kerugian inventori) akan jauh lebih merusak. |
 
 **Keputusan akhir dan justifikasi:**
-> Peneliti harus melaporkan kedua hasil tersebut (dengan dan tanpa outlier). Justifikasinya adalah prinsip faksifiabilitas; kegagalan atau ketidakkonsistenan data adalah bagian dari pengetahuan ilmiah yang valid untuk dilaporkan (negative results are still contributions).
+> Peneliti WAJIB melaporkan kegagalan sistem tersebut dalam Matriks Pengujian. Justifikasinya adalah esensi dari pengujian perangkat lunak (Software Testing) bukanlah untuk membuktikan bahwa aplikasi itu sempurna, melainkan untuk menemukan cacat (defect) sebanyak mungkin sebelum aplikasi dirilis. Negative results (sistem gagal) adalah kontribusi riset yang paling berharga.
+
 ---
 
 ## Latihan 3 — Posisi Paradigma
 
-**Topik riset:** Optimalisasi Rute Wisata Bandung dengan Algoritma Genetika
+**Topik riset:** Evaluasi Pengujian Black-Box (EP & BVA) pada Aplikasi Web Agri-Pos.
 
 | Kriteria | Positivis | Interpretivis | Design Science |
 |----------|-----------|---------------|----------------|
-| Kesesuaian dengan topik (1–5) | 3 | 1 | 5 |
-| Jenis data yang dikumpulkan | [cite_start]Data kuantitatif seperti nilai *fitness*, jumlah generasi, dan waktu proses[cite: 212]. | Persepsi atau kepuasan wisatawan terhadap rute yang disarankan. | [cite_start]Kinerja artefak (sistem) dalam memproses dan menghasilkan rute[cite: 32]. |
-| Limitasi paradigma | Hanya fokus pada angka hasil pengujian tanpa mempertimbangkan kenyamanan nyata pengguna. | Sangat subjektif, bergantung pada perasaan orang, dan sulit diukur secara teknis IT. | Terlalu fokus pada fungsionalitas sistem (apakah sistem jalan atau tidak), seringkali mengabaikan teori dasar yang lebih mendalam. |
+| Kesesuaian dengan topik (1–5) | 5 | 1 | 3 |
+| Jenis data yang dikumpulkan | Data kuantitatif: Rasio Pass/Fail, Defect Detection Rate (DDR), jumlah skenario pengujian. | Persepsi pengguna tentang kemudahan antarmuka aplikasi. | Proses perancangan algoritma atau pembuatan kode program aplikasi itu sendiri. |
+| Limitasi paradigma | Hanya mengukur "apa yang terjadi" berdasarkan input-output, tanpa bisa menjelaskan "mengapa kode tersebut gagal" secara internal (karena batasan Black-Box). | Sangat subjektif, tidak menguji fungsionalitas teknis sama sekali. | Fokus pada pembuatan solusi (artefak), padahal riset ini bertujuan untuk menguji artefak yang sudah ada. |
 
-**Paradigma yang dipilih:** **Design Science**
-[cite_start]**Alasan:** Riset ini berfokus pada penciptaan sebuah artefak berupa sistem perangkat lunak untuk memberikan solusi praktis atas masalah pencarian rute wisata di Bandung Raya[cite: 32, 254].
+**Paradigma yang dipilih:** **Positivis**
+**Alasan:** Penelitian ini mengevaluasi sebuah realitas objektif (ada atau tidaknya bug pada perangkat lunak) melalui serangkaian eksperimen terkontrol (matriks test case), di mana hasilnya berupa metrik kuantitatif (Defect Detection Rate) yang dapat direplikasi dan diverifikasi oleh pihak lain.
 
 ---
 
@@ -132,9 +130,4 @@ Skenario: Seorang peneliti menemukan bahwa jika 3 data point outlier dihapus, ha
 > Sebelum membaca materi ini, apakah pernah mempertanyakan klaim "95% akurat"? Setelah memahami rantai distorsi, pertanyaan apa yang sekarang akan diajukan saat membaca paper?
 
 **Jawaban:**
-> Sebelumnya, saya cenderung menerima hasil akhir di abstrak begitu saja. Namun setelah mempelajari rantai distorsi, saya akan lebih kritis mempertanyakan tahap **Reality → Data**. [cite_start]Saya akan mempertanyakan bagaimana peneliti menyederhanakan kondisi dunia nyata (seperti kemacetan Bandung yang dinamis) menjadi variabel angka statis, dan apakah penyederhanaan tersebut justru menghilangkan esensi dari masalah yang ingin dipecahkan[cite: 38, 124].
-
----
-
-**Referensi:**
-1. Nur Muhammad Hasyim, Esmeralda C. Djamal, Agus Komarudin. (2017). "Optimalisasi Rute Obyek Wisata Di Bandung Raya Menggunakan Algoritma Genetika". [cite_start]Seminar Nasional Aplikasi Teknologi Informasi (SNATi) 2017. [cite: 1, 20]
+> Sebelumnya, saya cenderung menerima hasil akhir di abstrak begitu saja, seperti klaim "aplikasi 100% bebas bug". Namun setelah memahami rantai distorsi, saya akan lebih kritis mempertanyakan tahap **Reality → Data**. Saya akan menanyakan: Apakah skenario uji yang dirancang benar-benar merepresentasikan perilaku ekstrem pengguna di dunia nyata, ataukah peneliti melakukan *Simplification Bias* dengan hanya menguji input yang sudah pasti benar agar aplikasinya terlihat sempurna?

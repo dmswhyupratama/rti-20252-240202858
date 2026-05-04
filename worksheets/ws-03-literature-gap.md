@@ -100,22 +100,20 @@ Baseline Selection:
 
 ## Latihan 1 — Concept-Centric Literature Table
 
-Gunakan topik riset dari WS-02. Cari minimal 5 paper relevan menggunakan Google Scholar atau database lain.
-
-**Topik riset:** ________________________________________
-**Query pencarian:** ____________________________________
-**Database:** ___________________________________________
+**Topik riset:** Pengujian Fungsional Sistem Informasi Manajemen Menggunakan Black Box Testing (EP dan BVA)
+**Query pencarian:** `("Black Box Testing") AND ("Equivalence Partitioning" OR "Boundary Value Analysis") AND ("Sistem Informasi" OR "Inventori")`
+**Database:** Google Scholar, Portal Garuda
 
 | # | Study | Tahun | Method | Dataset | Result | Limitasi |
 |---|-------|-------|--------|---------|--------|----------|
-| 1 | *Contoh: Rahman et al.* | *2023* | *CNN* | *ImageNet subset* | *Acc 91%* | *Hanya 3 kelas* |
-| 2 | | | | | | |
-| 3 | | | | | | |
-| 4 | | | | | | |
-| 5 | | | | | | |
+| 1 | *Ekasakti & Pratomo* | *2025* | *Black Box (Manual vs Otomatis)* | *Aplikasi Propertio.id* | *Pengujian manual unggul di test coverage (100%), otomasi lebih cepat 84,54%[cite: 13].* | *Otomasi butuh resource tinggi, pengujian manual kurang efisien waktu[cite: 13].* |
+| 2 | *Bong et al.* | *2024* | *Black Box (BVA & EP)* | *Sistem Informasi Stok PT ABC* | *Sistem berfungsi baik namun ada beberapa anomali yang butuh perbaikan[cite: 14].* | *Pengujian murni manual tanpa tools, tidak ada akses ke source code[cite: 14].* |
+| 3 | *Uminingsih et al.* | *2022* | *Black Box (EP)* | *Sistem Informasi Perpustakaan* | *Tingkat validitas 75%, ditemukan error (bug syntax) pada form pengembalian[cite: 15].* | *Ruang lingkup sangat terbatas hanya menguji 3 form utama[cite: 15].* |
+| 4 | *Suharyono et al.* | *2024* | *Black Box (BVA & EP)* | *Aplikasi E-Ticketing SIADITA* | *Efektivitas mencapai 91,66% (12 skenario invalid), tidak ada batasan karakter pada form[cite: 16].* | *Pengujian hanya dari sisi UI/fungsi tanpa melihat source code sama sekali[cite: 16].* |
+| 5 | *Nugraha et al.* | *2025* | *Black Box (EP)* | *Sistem Inventori CV Cahaya Baru* | *18 test case lulus, 1 gagal pada fungsi invoice/detail penjualan[cite: 17].* | *Pengujian hanya difokuskan secara spesifik pada halaman penjualan dan pembelian saja[cite: 17].* |
 
-**Pola yang terlihat — Metode dominan:** ___________________
-**Limitasi yang berulang:** ______________________________
+**Pola yang terlihat — Metode dominan:** Black Box Testing menggunakan pendekatan manual dengan teknik Equivalence Partitioning dan Boundary Value Analysis[cite: 14, 16, 17].
+**Limitasi yang berulang:** Ketiadaan akses ke *source code* sehingga pengujian dilakukan terbatas dari sisi *end-user*[cite: 14, 16], proses yang dilakukan murni secara manual[cite: 14, 16], serta ruang lingkup pengujian yang seringkali dibatasi hanya pada sebagian kecil modul/form[cite: 15, 17].
 
 ---
 
@@ -125,14 +123,14 @@ Berdasarkan tabel di Latihan 1, identifikasi gap.
 
 | Jenis Gap | Ditemukan? | Gap Statement |
 |-----------|-----------|---------------|
-| Performance Gap | [ ] Ya / [ ] Tidak | *Contoh: Akurasi turun di bawah 80% untuk kelas minoritas* |
-| Method Gap | [ ] Ya / [ ] Tidak | |
-| Data Gap | [ ] Ya / [ ] Tidak | |
-| Context Gap | [ ] Ya / [ ] Tidak | |
+| Performance Gap | [x] Ya / [ ] Tidak | *Pengujian fungsional manual terbukti memakan waktu eksekusi yang kurang efisien dibandingkan otomatis[cite: 13].* |
+| Method Gap | [x] Ya / [ ] Tidak | *Mayoritas pengujian BVA dan EP masih dieksekusi secara manual tanpa bantuan otomasi, padahal skenario ekstrim rentan terhadap human-error[cite: 14, 16].* |
+| Data Gap | [x] Ya / [ ] Tidak | *Pengujian sering dibatasi hanya pada modul tertentu (misal: hanya 3 form dasar), sehingga tidak merepresentasikan stabilitas sistem secara keseluruhan[cite: 15, 17].* |
+| Context Gap | [ ] Ya / [x] Tidak |  |
 
-**Gap utama yang dipilih:** _____________________________
+**Gap utama yang dipilih:** Method Gap & Data Gap (Pengujian manual yang berulang pada form yang terbatas).
 **Mengapa gap ini penting (bukan sekadar "belum ada yang meneliti")?**
-> ___________________________________________________
+> Kesalahan input pada form yang krusial (seperti *inbound/outbound* pada inventori gudang) dapat berdampak langsung pada kerugian finansial perusahaan. Mengandalkan pengujian manual yang terbatas hanya pada sebagian kecil modul[cite: 15, 17] berisiko meloloskan *bug* kritikal, sehingga diperlukan pendekatan pengujian yang lebih menyeluruh pada *edge cases* (kasus batas ekstrim).
 
 ---
 
@@ -142,11 +140,11 @@ Pilih 2 baseline dari literatur yang sudah dibaca.
 
 | # | Baseline | Mengapa Relevan | Mengapa Representatif | Apakah SOTA? | Sumber |
 |---|----------|----------------|----------------------|-------------|--------|
-| 1 | *Contoh: RF + TF-IDF* | *Task sama: klasifikasi teks* | *Dipakai 6 dari 10 paper* | *Bukan, tapi common practice* | *Lee et al., 2022* |
-| 2 | | | | | |
+| 1 | *Black-Box Manual (EP & BVA)* | *Tujuan sama: mencari cacat perangkat lunak pada form sistem informasi[cite: 14].* | *Pendekatan ini digunakan oleh mayoritas paper pengujian fungsional di Indonesia[cite: 14, 15, 16, 17].* | *Bukan SOTA, ini adalah common practice standar industri.* | *Bong et al., 2024[cite: 14]* |
+| 2 | *Black-Box Otomatis (Selenium/Katalon)* | *Menawarkan solusi nyata atas kelemahan efisiensi waktu pada pengujian manual[cite: 13].* | *Mewakili standar pengujian modern untuk mengeksekusi skenario repetitif secara konsisten.* | *Ya, mewakili SOTA dalam otomasi UI testing.* | *Ekasakti & Pratomo, 2025[cite: 13]* |
 
-**Apakah pemilihan baseline ini bisa dianggap straw man?** [ ] Ya / [ ] Tidak
-> Justifikasi: ________________________________________
+**Apakah pemilihan baseline ini bisa dianggap straw man?** [ ] Ya / [x] Tidak
+> Justifikasi: Pemilihan *baseline* ini sangat realistis dan adil karena mewakili dua spektrum utama dalam industri *Quality Assurance* saat ini. Baseline manual merepresentasikan cakupan (*coverage*) pengujian yang tinggi[cite: 13], sedangkan baseline otomatis merepresentasikan efisiensi waktu[cite: 13]. Membandingkan atau mengembangkan metode usulan dari kedua *baseline* ini membuktikan pemahaman yang utuh terhadap ekosistem pengujian perangkat lunak.
 
 ---
 
@@ -155,5 +153,4 @@ Pilih 2 baseline dari literatur yang sudah dibaca.
 > Apa perbedaan antara "belum ada yang meneliti ini" (klaim tanpa bukti) dengan research gap yang valid? Bagaimana cara membuktikan bahwa sebuah gap benar-benar ada?
 
 **Jawaban:**
-> ___________________________________________________
-> ___________________________________________________
+> Klaim "belum ada yang meneliti" hanyalah sebuah asumsi buta yang sering muncul karena peneliti kurang membaca literatur. Sebaliknya, *research gap* yang valid didasarkan pada penelusuran sistematis (seperti *Literature Matrix*), di mana kita benar-benar menemukan masalah, kelemahan, atau keterbatasan (*limitation*) yang secara eksplisit diakui oleh para peneliti sebelumnya di dalam *paper* mereka (misalnya, keterbatasan pengujian yang hanya pada modul tertentu[cite: 15, 17]). Cara membuktikannya adalah dengan mengompilasi studi-studi terdahulu yang relevan, menyoroti pola kelemahan metode atau data yang mereka gunakan secara berulang, lalu merumuskannya menjadi celah yang logis untuk disempurnakan.
