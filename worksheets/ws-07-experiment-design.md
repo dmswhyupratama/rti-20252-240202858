@@ -65,40 +65,38 @@ Ancaman validitas harus diidentifikasi **sebelum** eksperimen dan mitigasinya di
 
 ## Template A.7 — Desain Eksperimen Lengkap
 
-```
 EXPERIMENT DESIGN
 
-Research Question : ____________________
-Hypothesis        : ____________________
-Tipe Eksperimen   : [ ] Comparison  [ ] Ablation  [ ] Parameter
+Research Question : Seberapa besar peningkatan nilai Defect Detection Rate (DDR) dari pengujian Boundary Value Analysis (BVA) dan Equivalence Partitioning (EP) dibandingkan dengan pengujian kasual (ad-hoc) pada Controller MVC Sistem Manajemen Gudang Hasil Tani?
+Hypothesis        : Metode kasus batas (BVA dan EP) akan menghasilkan persentase nilai DDR yang secara signifikan lebih tinggi dibandingkan pengujian kasual karena menyasar titik buta matematis validasi pada lapisan Controller.
+Tipe Eksperimen   : [x] Comparison  [ ] Ablation  [ ] Parameter
 
 Kondisi Eksperimen:
 | Kondisi | Deskripsi | IV Value | CV Settings |
 |---------|-----------|----------|-------------|
-| Control |           |          |             |
-| Treatment |         |          |             |
+| Control | Pengujian kasual oleh pengembang tanpa dokumen panduan matriks. | Ad-Hoc Testing | Sistem Hasil Tani, Code Freeze, Reset DB (TRUNCATE) |
+| Treatment | Pengujian terstruktur menggunakan dokumen matriks nilai batas. | Matriks BVA & EP | Sistem Hasil Tani, Code Freeze, Reset DB (TRUNCATE) |
 
 Fairness Checklist:
-  [ ] Dataset identik untuk semua kondisi
-  [ ] Preprocessing setara
-  [ ] Tuning effort setara
-  [ ] Environment identik
-  [ ] Metrik evaluasi sama
+  [x] Dataset identik untuk semua kondisi
+  [x] Preprocessing setara
+  [x] Tuning effort setara
+  [x] Environment identik
+  [x] Metrik evaluasi sama
 
 Threat Analysis:
 | Threat Type | Ancaman Spesifik | Mitigasi |
 |-------------|-----------------|----------|
-| Internal    |                 |          |
-| External    |                 |          |
-| Construct   |                 |          |
-| Conclusion  |                 |          |
+| Internal    | Carry-over effect (penguji ad-hoc belajar dari pengujian BVA/EP jika urutannya terbalik). | Skenario pengujian dikunci: Ad-Hoc wajib dilakukan lebih dulu sebelum dokumen matriks BVA/EP diekspos ke penguji. |
+| External    | Hasil pengujian hanya berlaku untuk modul FEFO dan Inbound aplikasi Hasil Tani. | Mendokumentasikan kompleksitas algoritma bisnis agar dapat direplikasi untuk sistem pergudangan lain. |
+| Construct   | Menghitung bug visual/UI (seperti tombol salah warna) sebagai keberhasilan pengujian fungsional. | Menetapkan batasan tegas: bug hanya dihitung valid jika lolos mengubah basis data secara keliru atau membuat Controller *crash*. |
+| Conclusion  | Jumlah skenario uji (N) terlalu sedikit sehingga perbedaan persentase DDR tidak bermakna. | Merancang variasi data dummy yang cukup luas dan representatif berdasarkan pedoman BVA dan EP baku. |
 
 Statistical Plan:
-  Uji statistik   : ____________________
-  Justifikasi      : ____________________
-  Alpha            : ____________________
-  Effect size min  : ____________________
-```
+  Uji statistik   : Two-Proportion Z-Test
+  Justifikasi      : Cocok untuk membandingkan dua rasio/persentase proporsi (DDR kelompok intervensi vs DDR kelompok kontrol) yang saling independen.
+  Alpha            : 0.05
+  Effect size min  : 15% peningkatan nilai DDR.
 
 ---
 
@@ -106,13 +104,13 @@ Statistical Plan:
 
 Susun desain eksperimen berdasarkan RQ, variabel, dan sistem dari WS-04 sampai WS-06.
 
-**RQ:** __________________________________________________
-**Tipe eksperimen:** [ ] Comparison / [ ] Ablation / [ ] Parameter
+**RQ:** Seberapa besar peningkatan nilai Defect Detection Rate (DDR) dari pengujian Boundary Value Analysis (BVA) dan Equivalence Partitioning (EP) dibandingkan dengan pengujian kasual (ad-hoc) pada Controller MVC Sistem Manajemen Gudang Hasil Tani?
+**Tipe eksperimen:** [x] Comparison / [ ] Ablation / [ ] Parameter
 
 | Kondisi | Deskripsi | IV Value | CV Settings |
 |---------|-----------|----------|-------------|
-| Control | *Contoh: RF baseline dari literatur* | *RF* | *Dataset X, 80:20 split, seed 42* |
-| Treatment | | | |
+| Control | Pengujian fungsional *baseline* secara kasual oleh pengembang. | Eksekusi Ad-Hoc | Modul Transaksi Inbound/Outbound Hasil Tani, Reset DB per siklus. |
+| Treatment | Pengujian fungsional dengan dokumen panduan matriks terstruktur. | Eksekusi Matriks BVA/EP | Modul Transaksi Inbound/Outbound Hasil Tani, Reset DB per siklus. |
 
 ---
 
@@ -122,14 +120,14 @@ Evaluasi apakah desain eksperimen di Latihan 1 sudah fair.
 
 | Kriteria | Status | Detail |
 |----------|--------|--------|
-| Dataset identik | *Contoh: ✅ — sama-sama pakai CIC-MalMem-2022* | |
-| Preprocessing setara | | |
-| Tuning effort setara | | |
-| Environment identik | | |
-| Metrik evaluasi sama | | |
+| Dataset identik | ✅ | Data dummy input (berat barang, nama komoditas, jumlah pengeluaran) diambil dari rentang domain yang sama. |
+| Preprocessing setara | ✅ | Sistem di-reset (TRUNCATE database MySQL) ke kondisi kosong/awal setiap sebelum sesi pengujian dimulai. |
+| Tuning effort setara | ✅ | Batas waktu sesi pengujian (misal 2 jam per sesi) disetarakan untuk metode Ad-Hoc dan BVA/EP. |
+| Environment identik | ✅ | Diuji pada server lokal (XAMPP), versi PHP Native yang sama, dan peramban web yang persis sama. |
+| Metrik evaluasi sama | ✅ | Sama-sama menggunakan perhitungan persentase metrik DDR. |
 
-**Ada yang tidak fair?** [ ] Ya / [ ] Tidak
-> Jika ya, bagaimana cara memperbaikinya? ________________
+**Ada yang tidak fair?** [ ] Ya / [x] Tidak
+> Jika ya, bagaimana cara memperbaikinya? Desain sudah dipastikan 100% adil (fair) karena variabel kontrol (CV) mengunci kondisi lingkungan dan waktu uji dengan sangat ketat.
 
 ---
 
@@ -139,14 +137,14 @@ Identifikasi ancaman validitas untuk desain eksperimen ini.
 
 | Threat Type | Ancaman Spesifik | Mitigasi |
 |-------------|-----------------|----------|
-| Internal | *Contoh: Data leakage antara train-test* | *Contoh: Gunakan stratified split, validasi tidak ada overlap* |
-| External | | |
-| Construct | | |
-| Conclusion | | |
+| Internal | *Testing bias* atau *Learning effect* jika dilakukan oleh satu tester yang sama bolak-balik. | Kunci urutan eksekusi: Baseline (Ad-hoc) harus dijalankan sebelum desain matriks uji (BVA/EP) dibuat/diserahkan ke tester. |
+| External | Batasan arsitektur (hanya teruji pada PHP Native murni). | Definisikan dengan jelas di batasan masalah bahwa intervensi difokuskan pada lapisan logika Controller berbasis prosedur *native*. |
+| Construct | Kesalahan definisi "cacat fungsional" saat menghitung skor. | Menggunakan parameter error logger PHP (`E_ALL`) sebagai penentu objektif suatu *crash* pada *backend*. |
+| Conclusion | Pembulatan nilai metrik DDR yang manipulatif. | Melaporkan skor metrik secara telanjang beserta nilai mentah/rasio aslinya (jumlah error/total kasus). |
 
-**Ancaman mana yang paling sulit dimitigasi?** _____________
+**Ancaman mana yang paling sulit dimitigasi?** Internal Validity (*Testing bias* / Bias Penguji).
 **Mengapa?**
-> ___________________________________________________
+> Karena dalam skenario pengujian fungsional, seorang penguji memiliki ingatan tentang aplikasi. Jika orang yang menguji *Ad-Hoc* adalah orang yang juga menulis matriks BVA/EP, secara tidak sadar dia sudah mengetahui letak kelemahan sistem dan akan mengincar titik tersebut di sesi *Ad-Hoc*, sehingga menaikkan skor *baseline* secara tidak natural dan merusak keadilan eksperimen.
 
 ---
 
@@ -155,6 +153,6 @@ Identifikasi ancaman validitas untuk desain eksperimen ini.
 > Sebuah paper melaporkan "metode kami mengalahkan semua baseline." Apa 3 pertanyaan pertama yang harus diajukan untuk mengevaluasi klaim ini?
 
 **Jawaban:**
-1. ___________________________________________________
-2. ___________________________________________________
-3. ___________________________________________________
+1. Apakah *baseline* yang digunakan benar-benar merepresentasikan metode standar industri yang dioptimalkan, atau sengaja disetel lemah (*strawman baseline*) agar metode baru terlihat bagus?
+2. Apakah perbandingan dilakukan di dalam *environment*, pengaturan parameter awal, *tuning effort*, dan *dataset* yang benar-benar 100% identik (*fairness*)?
+3. Metrik apa yang digunakan sebagai tolak ukur "mengalahkan", dan apakah metrik tersebut secara objektif mengukur tujuan utama (validitas konstruk), atau hanya hasil *cherry-picking* dari peneliti?

@@ -64,46 +64,43 @@ Jika variabel tidak bisa di-map ke komponen apapun → arsitektur perlu didesain
 
 ## Template A.6 — Mapping RQ ke Arsitektur Sistem
 
-```
 SYSTEM-EXPERIMENT MAPPING
 
-Research Question: ____________________
+**Research Question:** Seberapa besar peningkatan nilai Defect Detection Rate (DDR) dari pengujian Boundary Value Analysis (BVA) dan Equivalence Partitioning (EP) dibandingkan dengan pengujian kasual (ad-hoc) pada Controller MVC Sistem Manajemen Gudang Hasil Tani?
 
-Variable → Component Mapping:
+**Variable → Component Mapping:**
+
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi/Pengukuran |
-|----------|------|-----------------|---------------------------|
-|          | IV   |                 |                           |
-|          | DV   |                 |                           |
-|          | CV   |                 |                           |
+|---|---|---|---|
+| Pendekatan Uji | IV | Dokumen Uji & Form Input (View) | Mengubah instruksi input penguji (bebas/ad-hoc vs terpandu matriks BVA/EP) |
+| Efektivitas (DDR) | DV | Response Output & Error Log (Controller) | Menghitung rasio jumlah output Gagal/Error valid terhadap total skenario uji |
+| Lingkungan Sistem | CV | Database MySQL & Source Code PHP | Eksekusi script TRUNCATE database sebelum berganti fase uji & membekukan kode |
 
-4 Prinsip Desain:
-  [ ] Traceability — Setiap komponen bisa ditelusuri ke variabel
-  [ ] Variable Isolation — IV bisa diubah tanpa mengubah CV
-  [ ] Measurement Integration — Pengukuran DV built-in
-  [ ] Reproducibility — Setup bisa direkonstruksi
+**4 Prinsip Desain:**
+- [x] Traceability — Setiap komponen bisa ditelusuri ke variabel
+- [x] Variable Isolation — IV bisa diubah tanpa mengubah CV
+- [x] Measurement Integration — Pengukuran DV built-in
+- [x] Reproducibility — Setup bisa direkonstruksi
 
-Experimental Setup:
-  Input data     : ____________________
-  Parameter      : ____________________
-  Output format  : ____________________
-```
-
+**Experimental Setup:**
+- **Input data:** Data *dummy* berat barang organik (kg) dan kuantitas pengeluaran (FEFO)
+- **Parameter:** Nilai normal, nilai minus, nilai nol, huruf, dan nilai ekstrim batas atas/bawah
+- **Output format:** Status akhir pengujian (Lulus/Gagal) dan persentase metrik DDR
 ---
-
 ## Latihan 1 — Variable-to-Component Mapping
 
 Gunakan RQ dan variabel dari WS-05. Petakan ke komponen sistem.
 
-**RQ:** __________________________________________________
+**RQ:** Seberapa besar peningkatan nilai Defect Detection Rate (DDR) dari pengujian Boundary Value Analysis (BVA) dan Equivalence Partitioning (EP) dibandingkan dengan pengujian kasual (ad-hoc) pada Controller MVC Sistem Manajemen Gudang Hasil Tani?
 
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi / Pengukuran |
 |----------|------|-----------------|---------------------------|
-| *Contoh: Jenis model* | *IV* | *Modul classifier (swap RF ↔ CNN)* | *Ganti config `model_type`* |
-| | DV | | |
-| | CV | | |
+| *Pendekatan Uji* | *IV* | *Mekanisme Input Skenario* | *Ganti metode (Ad-hoc ↔ Matriks BVA/EP)* |
+| *Efektivitas Deteksi* | DV | *Logika Validasi Controller* | *Pencatatan status temuan bug fungsional untuk rumus DDR* |
+| *Lingkungan Sistem* | CV | *Database & State Aplikasi* | *Jalankan query reset database setiap iterasi metode uji* |
 
-**Apakah semua variabel bisa di-map?** [ ] Ya / [ ] Tidak
-> Jika tidak, komponen apa yang perlu ditambahkan? _________
+**Apakah semua variabel bisa di-map?** [x] Ya / [ ] Tidak
+> **Jika tidak, komponen apa yang perlu ditambahkan?** Rantai arsitektur sudah tertutup. IV dimanipulasi lewat input, sistem (CV) memproses secara konstan, dan DV diukur langsung dari respons sistem.
 
 ---
 
@@ -113,31 +110,32 @@ Evaluasi desain sistem terhadap 4 prinsip.
 
 | Prinsip | Status | Bukti / Penjelasan |
 |---------|--------|-------------------|
-| Traceability | *Contoh: ✅ — setiap modul punya label variabel* | |
-| Modularity | | |
-| Controllability | | |
-| Measurability | | |
+| Traceability | ✅ | Form input mewakili IV (tempat manipulasi variabel), Controller mewakili CV (objek konstan), dan output layar mewakili DV (pengukuran bug). |
+| Modularity | ✅ | Metode pengujian (IV) diisolasi murni di level *tester* dan dokumen uji, tanpa perlu mengubah satu baris pun kode pada sistem (CV). |
+| Controllability | ✅ | Kondisi awal sistem bisa dikontrol mutlak melalui skrip pembersihan *database* sehingga tidak ada sisa *state* dari pengujian sebelumnya. |
+| Measurability | ✅ | Sistem memberikan respons keluaran (sukses/pesan error/crash) yang dapat langsung dicatat sebagai basis perhitungan kuantitatif DDR. |
 
-**Prinsip mana yang paling sulit dipenuhi?** _______________
+**Prinsip mana yang paling sulit dipenuhi?** Measurability (Keterukuran langsung dari sistem).
 **Strategi untuk mengatasinya:**
-> ___________________________________________________
+> Terkadang aplikasi PHP native yang *crash* hanya memunculkan "Blank White Screen" sehingga sulit dibedakan antara *bug* fungsional atau *server timeout*. Strateginya adalah menyalakan fitur `error_reporting(E_ALL)` pada PHP selama masa eksperimen agar setiap kegagalan logika di *Controller* langsung tercetak jelas di layar dan mudah diklasifikasikan untuk metrik DDR.
 
 ---
 
 ## Latihan 3 — Ablation Study Planning
 
-Jika sistem memiliki 3 komponen utama, rencanakan ablation study.
+Jika sistem memiliki 3 komponen utama, rencanakan ablation study. 
+*(Konteks SQA: Komponen desain intervensi uji pada arsitektur MVC).*
 
 | Kondisi | Komponen A | Komponen B | Komponen C | Hasil yang Diharapkan |
 |---------|-----------|-----------|-----------|----------------------|
-| Full | *Contoh: ✅ CNN* | *Contoh: ✅ Temporal features* | *Contoh: ✅ Z-score norm* | *Baseline penuh* |
-| – A | ❌ (ganti RF) | ✅ | ✅ | |
-| – B | ✅ | ❌ (tanpa temporal) | ✅ | |
-| – C | ✅ | ✅ | ❌ (tanpa normalisasi) | |
+| Full | ✅ *Skenario BVA (Batas Nilai)* | ✅ *Skenario EP (Partisi Tipe Data)* | ✅ *Bypass UI Validation (Hit API/Controller Langsung)* | *DDR maksimal (Controller teruji penuh)* |
+| – A | ❌ *(Tanpa BVA)* | ✅ | ✅ | *Bug matematis/logika FEFO lolos* |
+| – B | ✅ | ❌ *(Tanpa EP)* | ✅ | *Bug input karakter/simbol aneh lolos* |
+| – C | ✅ | ✅ | ❌ *(Tanpa Bypass UI, tertahan validasi HTML5 front-end)* | *Nilai DDR palsu (Controller seolah kebal, padahal bug hanya terblokir di View)* |
 
-**Komponen mana yang diprediksi paling berkontribusi?** _____
+**Komponen mana yang diprediksi paling berkontribusi?** Komponen A (Skenario BVA) dan Komponen C (Bypass UI Validation).
 **Mengapa?**
-> ___________________________________________________
+> Dalam logika operasional pergudangan (FEFO dan Inbound), cacat sistem paling fatal biasanya bersembunyi di perhitungan matematis pada nilai batas ekstrem (seperti kuantitas pengeluaran lebih besar 1 angka dari stok nyata, atau input berat bernilai minus). BVA dirancang khusus untuk memukul titik ini. Komponen C juga krusial karena menguji *Controller* tidak akan valid jika *tester* masih terhalang oleh restriksi `<input type="number">` di sisi antarmuka (*View*).
 
 ---
 
@@ -146,5 +144,6 @@ Jika sistem memiliki 3 komponen utama, rencanakan ablation study.
 > Apa risiko jika sistem dibangun seperti produk (monolitik, fitur lengkap) lalu baru dilakukan eksperimen? Mengapa arsitektur modular penting untuk riset?
 
 **Jawaban:**
-> ___________________________________________________
-> ___________________________________________________
+> Jika eksperimen pengujian langsung dilakukan pada sistem monolitik tanpa isolasi arsitektur, akan terjadi "bias perancu" (*confounding bias*). Ketika sebuah input *error* terjadi, peneliti tidak akan tahu pasti apakah sistem gagal karena kode di *Front-End (View)*, cacat algoritma di *Back-End (Controller)*, atau gagalnya koneksi di level *Database (Model)*.
+>
+> Arsitektur yang modular (seperti pemisahan ketat pada konsep MVC) sangat esensial dalam riset rekayasa perangkat lunak. Hal ini memungkinkan peneliti untuk mengisolasi variabel intervensinya. Misalnya, dengan arsitektur modular, kita bisa menonaktifkan (*bypass*) lapisan *View*, lalu menembak input pengujian langsung ke dalam logika *Controller*. Hasilnya, data metrik (DDR) yang diperoleh murni merepresentasikan keandalan otak pemrosesan data, bukan sekadar ketahanan tampilan visualnya.
