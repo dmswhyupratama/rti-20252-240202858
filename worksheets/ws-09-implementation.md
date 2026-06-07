@@ -59,84 +59,84 @@ Capai **repeatability** dulu, baru **reproducibility**.
 
 ## Template A.9 — Dokumentasi Setup Eksperimen
 
-```
 EXPERIMENT SETUP DOCUMENTATION
 
 Hardware:
-  CPU     : ____________________
-  RAM     : ____________________
-  GPU     : ____________________
-  Storage : ____________________
+  CPU     : Intel Core Ultra 5 125H
+  RAM     : 16 GB
+  GPU     : iGPU Intel ARC Graphics
+  Storage : 512 GB SSD
 
 Software:
-  OS        : ____________________
-  Runtime   : ____________________
-  Framework : ____________________
+  OS        : Windows 11 64-bit
+  Runtime   : XAMPP Server v3.3.0 (Apache & MySQL)
+  Framework : PHP Native MVC Architecture
 
 Dependencies:
 | Library | Version | Sumber | Hash/Checksum |
 |---------|---------|--------|---------------|
-|         |         |        |               |
-|         |         |        |               |
+| PHP Engine | 8.1.x | Bawaan XAMPP | - |
+| MySQL Server | 10.4.x | Bawaan XAMPP | - |
+| Web Browser | Google Chrome v120+ | Official Installer | - |
 
 Konfigurasi:
-  Config file     : ____________________
-  Random seed     : ____________________
-  Hyperparameters : ____________________
+  Config file     : `app/config/database.php`
+  Random seed     : Tidak menggunakan RNG. Input berdasarkan Dokumen Matriks Skenario Uji.
+  Hyperparameters : `error_reporting(E_ALL)` diaktifkan.
 
 Reproducibility Check:
-  [ ] Dependency terdokumentasi (requirements.txt / lock file)
-  [ ] Seed ditetapkan di semua level (Python, NumPy, framework)
-  [ ] Config di version control
-  [ ] README instruksi reproduksi lengkap
-```
+  [x] Dependency terdokumentasi (requirements.txt / lock file) -> *Tergantikan oleh spek XAMPP*
+  [x] Seed ditetapkan di semua level (Python, NumPy, framework) -> *Input matriks dikunci*
+  [x] Config di version control
+  [x] README instruksi reproduksi lengkap
 
 ---
 
 ## Latihan 1 — Environment Specification
 
-Dokumentasikan environment untuk eksperimen Anda (boleh environment saat ini atau yang direncanakan).
+Dokumentasikan environment untuk eksperimen Anda (Sistem Manajemen Gudang Hasil Tani).
 
 | Komponen | Spesifikasi |
 |----------|------------|
-| CPU | *Contoh: Intel Core i7-12700H, 14 Core* |
-| RAM | *Contoh: 32 GB DDR5* |
-| GPU | *Contoh: NVIDIA RTX 3060 6GB / CPU-only jika tidak ada GPU* |
-| OS | *Contoh: Ubuntu 22.04 LTS / Windows 11* |
-| Runtime | |
-| Framework | |
-| Random Seed | |
+| CPU | Intel Core Ultra 5 125H |
+| RAM | 16 GB |
+| GPU | iGPU Intel ARC Graphics |
+| OS | Windows 11 64-bit |
+| Runtime | XAMPP (Apache HTTP Server & MySQL) |
+| Framework | PHP Native MVC |
+| Random Seed | N/A (Menggunakan input manual statis dari TC-04) |
 
 **Dependencies (minimal 5):**
 
 | Library | Version | Alasan Dibutuhkan |
 |---------|---------|-------------------|
-| *Contoh: scikit-learn* | *1.3.2* | *Klasifikasi + evaluasi metrik* |
-| | | |
-| | | |
-| | | |
-| | | |
+| PHP Engine | 8.1.x | Memproses logika Controller dan algoritma FEFO |
+| MySQL/MariaDB | 10.4.x | Menyimpan data tabel stok dan transaksi SO |
+| Apache | 2.4.x | Web server lokal untuk menjalankan aplikasi |
+| Google Chrome | 120+ | Eksekusi UI dan memanipulasi DOM HTML (Inspect Element) |
+| phpMyAdmin | 5.2.x | Manajemen database (Truncate/Reset tabel antar sesi uji) |
 
 ---
 
 ## Latihan 2 — Repeatability Test Plan
 
 Rancang tes repeatability sederhana: jalankan kode yang sama 3× di environment yang sama.
+*(Skenario: Eksekusi TC-04 BVA Batas Maksimal - Bypass UI 501 Kg)*
 
-| Run | Seed | Metrik Utama | Hasil Sama? |
+| Run | Seed | Metrik Utama (Respons Sistem) | Hasil Sama? |
 |-----|------|-------------|-------------|
-| 1 | *Contoh: 42* | *Contoh: Accuracy* | — |
-| 2 | | | [ ] Ya / [ ] Tidak |
-| 3 | | | [ ] Ya / [ ] Tidak |
+| 1 | *Input: 501* | *Bug Valid: Sistem berhasil save 501 Kg ke database* | — |
+| 2 | *Input: 501* | *Bug Valid: Sistem berhasil save 501 Kg ke database* | [x] Ya / [ ] Tidak |
+| 3 | *Input: 501* | *Bug Valid: Sistem berhasil save 501 Kg ke database* | [x] Ya / [ ] Tidak |
 
 **Jika hasil berbeda, kemungkinan penyebab:**
-> ___________________________________________________
+> Sesi pengujian tidak di-reset. Jika *Run* 2 gagal (sistem menolak input) padahal *Run* 1 berhasil, itu kemungkinan karena tabel *database* transaksi belum di-TRUNCATE, sehingga sistem memblokir karena deteksi ID Pesanan ganda (*Duplicate Entry*), bukan karena validasi logika kuantitas stok.
 
 **Checklist kontrol yang sudah diterapkan:**
-- [ ] Random seed di-set di semua level
-- [ ] Tidak ada background process yang mengganggu
-- [ ] Cache dibersihkan antar-run
-- [ ] Config file yang sama untuk semua run
+- [x] Random seed di-set di semua level *(Input dikunci wajib 501)*
+- [x] Tidak ada background process yang mengganggu
+- [x] Cache dibersihkan antar-run *(Wajib Truncate DB & Mode Incognito)*
+- [x] Config file yang sama untuk semua run
 
 ---
 
@@ -144,34 +144,31 @@ Rancang tes repeatability sederhana: jalankan kode yang sama 3× di environment 
 
 Tulis README minimum untuk eksperimen Anda (6 komponen wajib).
 
-```
-# Judul Eksperimen: ____________________
+```text
+# Judul Eksperimen: Evaluasi Defect Detection Rate pada Controller MVC WMS Hasil Tani
 
 ## 1. Environment
-> (Salin spesifikasi dari Latihan 1)
+- OS: Windows 11 64-bit
+- Runtime: XAMPP (PHP 8.1, MySQL 10.4)
+- Browser: Google Chrome
 
 ## 2. Installation
-> (Langkah instalasi, misal: "pip install -r requirements.txt")
+- Pindahkan folder source code WMS ke `C:\xampp\htdocs\`.
+- Jalankan Apache dan MySQL dari XAMPP Control Panel.
+- Buat database `db_hasiltani` di phpMyAdmin, lalu import file `database_empty.sql`.
 
 ## 3. Data
-> (Deskripsi data: sumber, format, ukuran)
+Tidak menggunakan dataset otomatis. Data pengujian diinput manual berdasarkan Dokumen Skenario Uji. Skenario utama: TC-04 (Pisang Cavendish, Stok Awal 500 Kg, Input Permintaan 501 Kg).
 
 ## 4. Execution
-> (Command untuk menjalankan eksperimen)
+- Buka Chrome, login sebagai Sales ke `http://localhost/wms/public`.
+- Masuk ke menu Buat Pesanan Baru.
+- Gunakan fitur "Inspect Element" pada browser untuk menghapus atribut `max="500"` di HTML.
+- Masukkan input ekstrem (501) lalu Simpan.
+- PENTING: Antar percobaan, jalankan query `TRUNCATE TABLE transaksi_outbound` untuk reset env.
 
 ## 5. Configuration
-> (File config yang digunakan + parameter kunci)
+Koneksi database pada `app/config/database.php` menggunakan user: root dan password: (kosong).
 
 ## 6. Expected Output
-> (Contoh output yang diharapkan + format)
-```
-
----
-
-## Refleksi
-
-> Apakah eksperimen Anda saat ini bisa direproduksi oleh orang lain tanpa bantuan Anda? Komponen apa yang masih hilang?
-
-**Level saat ini:** [ ] Repeatability / [ ] Reproducibility / [ ] Belum keduanya
-**Komponen yang belum terdokumentasi:**
-> ___________________________________________________
+Sistem MVC yang rentan akan meloloskan data 501 ke dalam database (menyebabkan status "Pending" pada dashboard Admin). Temuan ini dicatat sebagai Bug Valid (Fail) untuk metrik DDR.
