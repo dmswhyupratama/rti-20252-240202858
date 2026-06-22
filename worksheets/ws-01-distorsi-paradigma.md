@@ -26,7 +26,15 @@ Etika mencegah distorsi yang disengaja (fabrikasi, cherry-picking). Validitas me
 
 ### Paradigma Riset
 
-Mata kuliah ini menggunakan pendekatan **Positivist** (fenomena TI bisa diukur objektif melalui eksperimen terkontrol) diperkuat **Design Science Research** (artefak dibuat sebagai instrumen pengujian hipotesis, bukan tujuan akhir).
+Mata kuliah ini menggunakan pendekatan **Positivist** (fenomena TI bisa diukur objektif melalui eksperimen terkontrol) diperkuat **Design Science Research** (DSR). Penting untuk membedakan keduanya:
+
+| Paradigma | Cara Kerja | Contoh di TI |
+|-----------|-----------|---------------|
+| **Positivis** | Uji hipotesis dengan eksperimen terkontrol | Apakah CNN lebih akurat dari RF pada dataset X? |
+| **Design Science Research** | Bangun artefak (sistem/model/framework) untuk menguji proposisi | Dapatkah arsitektur hybrid CNN+LSTM membuktikan peningkatan recall ≥5%? |
+| **Interpretivis** | Pahami makna melalui konteks & kualitatif | Bagaimana peneliti manafsirkan anomali data sensor IoT? |
+
+Dalam DSR, artefak **bukan tujuan akhir** — ia adalah instrumen untuk menghasilkan pengetahuan. Pertanyaan riset tetap harus difalsifikasi.
 
 ### Mode Berpikir Peneliti
 
@@ -75,9 +83,11 @@ Tanggal          : 4 Mei 2026
 
 ## Latihan 1 — Identifikasi Distorsi
 
+Pilih satu paper riset di bidang TI yang mengklaim "metode X meningkatkan performa." Telusuri setiap tahap Research Trust Model.
+
 **Paper yang dipilih:**
-> Judul: Analisis dan Pengujian Sistem Informasi Stok dengan Boundary Value Analysis pada PT ABC
-> Penulis (Tahun): Bong et al. (2024)[cite: 14]
+> Judul: _______________________________________________
+> Penulis (Tahun): ______________________________________
 
 | Tahap | Apa yang Dilakukan | Potensi Distorsi |
 |-------|-------------------|-----------------|
@@ -112,13 +122,13 @@ Skenario: Seorang peneliti/QA menemukan bahwa saat menginput angka minus (-50) p
 
 ## Latihan 3 — Posisi Paradigma
 
-**Topik riset:** Evaluasi Pengujian Black-Box (EP & BVA) pada Aplikasi Web Agri-Pos.
+**Topik riset:** ________________________________________
 
 | Kriteria | Positivis | Interpretivis | Design Science |
 |----------|-----------|---------------|----------------|
-| Kesesuaian dengan topik (1–5) | 5 | 1 | 3 |
-| Jenis data yang dikumpulkan | Data kuantitatif: Rasio Pass/Fail, Defect Detection Rate (DDR), jumlah skenario pengujian. | Persepsi pengguna tentang kemudahan antarmuka aplikasi. | Proses perancangan algoritma atau pembuatan kode program aplikasi itu sendiri. |
-| Limitasi paradigma | Hanya mengukur "apa yang terjadi" berdasarkan input-output, tanpa bisa menjelaskan "mengapa kode tersebut gagal" secara internal (karena batasan Black-Box). | Sangat subjektif, tidak menguji fungsionalitas teknis sama sekali. | Fokus pada pembuatan solusi (artefak), padahal riset ini bertujuan untuk menguji artefak yang sudah ada. |
+| Kesesuaian dengan topik (1–5) | *Contoh: 4* | *Contoh: 2* | *Contoh: 5* |
+| Jenis data yang dikumpulkan | | | |
+| Limitasi paradigma | | | |
 
 **Paradigma yang dipilih:** **Positivis**
 **Alasan:** Penelitian ini mengevaluasi sebuah realitas objektif (ada atau tidaknya bug pada perangkat lunak) melalui serangkaian eksperimen terkontrol (matriks test case), di mana hasilnya berupa metrik kuantitatif (Defect Detection Rate) yang dapat direplikasi dan diverifikasi oleh pihak lain.
