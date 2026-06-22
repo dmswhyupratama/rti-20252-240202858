@@ -10,8 +10,6 @@
 
 Tujuan implementasi riset bukan membuat software yang berfungsi, melainkan membangun **instrumen pengukuran yang konsisten**. Setiap modul harus di-mapping ke variabel (dari Bab 6), parameter harus config-driven, dan logging aktif dari hari pertama.
 
-> **Mengapa reproducibility penting?** Sains dibangun di atas prinsip verifikasi — temuan harus bisa dikonfirmasi oleh peneliti lain. _Replicability crisis_ yang terjadi di banyak paper riset ML/AI disebabkan oleh environment tidak terdokumentasi: orang lain tidak bisa reproduksi, hasil diragukan, kepercayaan terhadap temuan hilang. Prinsip: **dokumentasi environment = snapshot kredibilitas riset Anda.**
-
 ### Reproducible Implementation Model
 
 ```
@@ -49,15 +47,7 @@ Capai **repeatability** dulu, baru **reproducibility**.
 1. Menunda environment setup → bug sulit dilacak
 2. Tidak pakai version control → hasil tidak bisa direkonstruksi
 3. Menolak Docker/container → "di laptop saya bisa" saat review
-   - **Docker** = teknologi container yang "membungkus" aplikasi beserta seluruh dependency-nya dalam satu unit terisolasi. Hasilnya: kode berjalan identik di laptop, server, maupun reviewer lain. Intro singkat: `docker run -v $(pwd):/workspace environment-image python run_experiment.py`
 4. 3× hasil sama ≠ repeatable (bisa cache/state tersimpan)
-
-### Dependency Locking
-
-Mengandalkan "install library terbaru" berbahaya: versi berbeda = perilaku berbeda = hasil tidak reproducible. Praktik:
-- **Python**: buat `requirements.txt` dengan versi eksplisit: `scikit-learn==1.3.2`, lalu kunci dengan `pip freeze > requirements.txt`
-- **Conda**: gunakan `conda env export > environment.yml` untuk snapshot lengkap
-- **Node.js/R/Julia**: gunakan `package-lock.json` / `renv.lock` / `Project.toml` — semua fungsi serupa: lock versi + hash
 
 ### Istilah Penting
 
@@ -140,7 +130,7 @@ Rancang tes repeatability sederhana: jalankan kode yang sama 3× di environment 
 | 3 | *Input: 501* | *Bug Valid: Sistem berhasil save 501 Kg ke database* | [x] Ya / [ ] Tidak |
 
 **Jika hasil berbeda, kemungkinan penyebab:**
-> ___________________________________________________
+> Sesi pengujian tidak di-reset. Jika *Run* 2 gagal (sistem menolak input) padahal *Run* 1 berhasil, itu kemungkinan karena tabel *database* transaksi belum di-TRUNCATE, sehingga sistem memblokir karena deteksi ID Pesanan ganda (*Duplicate Entry*), bukan karena validasi logika kuantitas stok.
 
 **Checklist kontrol yang sudah diterapkan:**
 - [x] Random seed di-set di semua level *(Input dikunci wajib 501)*
